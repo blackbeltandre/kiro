@@ -25,16 +25,16 @@
         'opsz' 24;
 }
 
-/* Eerie Glow Effects */
-.eerie-glow-green {
+/* Eerie Glow Effects - Only in Dark Mode */
+.dark .eerie-glow-green {
     text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00, 0 0 20px #00ff00;
 }
 
-.eerie-glow-purple {
+.dark .eerie-glow-purple {
     text-shadow: 0 0 5px #9333ea, 0 0 10px #9333ea;
 }
 
-.eerie-glow-orange {
+.dark .eerie-glow-orange {
     text-shadow: 0 0 5px #f97316, 0 0 10px #f97316;
 }
 

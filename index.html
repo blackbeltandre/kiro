@@ -41,9 +41,43 @@
             },
         };
     </script>
+
+    <!-- Dark/Light Mode Toggle Script -->
+    <script>
+        // Check for saved theme preference or default to dark mode
+        const getTheme = () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                return savedTheme;
+            }
+            return 'dark'; // Default to dark mode
+        };
+
+        // Apply theme on page load
+        const theme = getTheme();
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Toggle theme function
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-sans text-gray-800 dark:text-gray-200">
-    <div class="flex h-screen overflow-hidden bg-[#18191c]">
+<body class="bg-gray-100 dark:bg-[#18191c] font-sans text-gray-800 dark:text-gray-200 transition-colors duration-200">
+    <div class="flex h-screen overflow-hidden bg-gray-100 dark:bg-[#18191c]">
         <!-- Left Sidebar: Icon Navigation -->
         <div class="flex flex-col w-16 bg-[#202225] p-2 items-center justify-between">
             <div class="flex flex-col items-center space-y-4">
@@ -229,77 +263,152 @@
             </div>
         </main>
 
-        <!-- Right Sidebar: Team Info & Chat -->
-        <aside class="w-80 bg-[#2b2d31] flex flex-col border-l border-black/20">
-            <div class="p-4 flex-shrink-0">
-                <h3 class="font-display font-bold text-lg text-gray-100 mb-3 tracking-wide">Team Info (3)</h3>
-                <div class="space-y-3">
-                    <div class="flex items-center space-x-3">
-                        <img alt="Alex Grim's avatar" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBssPp3ppR4L0DcqG3TmyEjBcd4UBBElGMdcMGBPDo4FWy00TSpQc_m3CxnmBFs7ooVPv3BRtBkERFTi5c9iT0LO6wFeBTLTqzW9bjhSuRVvFdVZj2hoO8YS3KPJue01zpwFt6WcbGjmEEjfausVBr-sXNzJj1fINrwi3MuRCu-4WsSSKEC9BmbcZksl_ihv3ogV-uHt5YmIullulIcK7B49GpllGRuVccql5W4jaM9pSg0kORVxk80SoFIobeE5iW2vqVSUG2rWOxH"/>
-                        <span class="font-medium text-gray-300">Alex Grim</span>
-                        <span class="material-icons text-green-500 text-lg ml-auto eerie-glow-green" title="Online">mic</span>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <img alt="Bella Witchwood's avatar" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlwkwJpY9SBsf_kTNeAGnpEIxxC_GMUy2ykJ8f8vBja7Kw9sWK7e_GncalRPBh2K1brEcV5Mk5cQn3b3SY8Cs4_u3fumS_tTh-IUbM5_c7yWUvoTPV1cAaVor0Tuv0ArY5N04WikAA9WqhHExSPeRxf1uqivLgDOvSnzeRyTAowDhJWuo0vP0txoogo89UxOdKcS8WF5oBNHlV-HF1BLqElZ-fF9RBlUpfmBo3RogvL9XTteUScdl4ZLgkxo29ErMnuF3-sLXZeYSS"/>
-                        <span class="font-medium text-gray-300">Bella Witchwood</span>
-                        <span class="material-icons text-green-500 text-lg ml-auto eerie-glow-green" title="Online">mic</span>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <img alt="Casey Spectre's avatar" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJb0bguRd6gYOv8CzSkj8y13xt1E-k0tE8DdjRJlaImZVUAhQnr4AcV-POj_BFgRF23XxgI0megaj9Hbaxk0bsLADJf1KCxupRdxcssj2OxILcfRiplVxcC3W4d3WTw-sac5W-uamB6PkZiZc4UeSVRWgyHqnW6NtOU89JYGfjwyqfP-SxxrvmKB4ml2POsmgt2ZDvBlEzdj5atxVzJZERfNtTeztXk4RafQuxmK4RX9nE5xKaSJ9ugdbYO63xelLvBXR_8WZJ1Zde"/>
-                        <span class="font-medium text-gray-300">Casey Spectre</span>
-                        <span class="material-icons text-red-500 text-lg ml-auto" title="Muted">mic_off</span>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-1 overflow-y-auto p-4 space-y-6 border-t border-black/20">
-                <div>
-                    <h3 class="font-display font-bold text-lg text-gray-100 mb-3 tracking-wide">Meeting Schedules</h3>
-                    <div class="space-y-3">
-                        <div class="bg-[#313338] p-3 rounded-lg">
-                            <p class="font-bold text-purple-400">Mid-point Check-in</p>
-                            <p class="text-sm text-gray-400">Today @ 4:00 PM</p>
+        <!-- Right Sidebar: Project Files, Offerings, Page Thoughts, Chat -->
+        <aside class="w-80 bg-[#2b2d31] flex flex-col border-l border-black/20 overflow-y-auto">
+            <!-- Project Files -->
+            <div class="p-4 border-b border-black/20">
+                <h3 class="font-display font-bold text-lg text-gray-100 mb-3 tracking-wide">PROJECT FILES</h3>
+                <div class="space-y-2">
+                    <div class="text-gray-400">
+                        <div class="flex items-center space-x-1 cursor-pointer hover:text-gray-200">
+                            <span class="material-symbols-outlined text-base">expand_more</span>
+                            <span class="font-semibold text-sm">GHOST-NET</span>
                         </div>
-                        <div class="bg-[#313338] p-3 rounded-lg">
-                            <p class="font-bold text-gray-300">Final Presentation Prep</p>
-                            <p class="text-sm text-gray-400">Tomorrow @ 10:00 AM</p>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="font-display font-bold text-lg text-gray-100 mb-3 tracking-wide">Noted</h3>
-                    <div class="bg-[#313338] p-3 rounded-lg">
-                        <ul class="list-disc list-inside text-sm space-y-1 text-gray-300">
-                            <li>Setup initial environment</li>
-                            <li>Finalize data preprocessing steps</li>
-                            <li class="text-green-400">Train baseline model <span class="text-xs">(Done)</span></li>
-                            <li>Experiment with hyper-parameters</li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="font-display font-bold text-lg text-gray-100 mb-3 flex items-center space-x-2 tracking-wide">
-                        <span>Chat with the Witch</span>
-                        <span class="material-icons text-orange-500 text-xl eerie-glow-orange">psychology</span>
-                    </h3>
-                    <div class="bg-[#313338] p-3 rounded-lg space-y-3 text-sm">
-                        <div class="flex justify-end">
-                            <div class="bg-primary/80 text-white p-2 rounded-lg max-w-xs">
-                                <p>What's the optimal learning rate for this task?</p>
+                        <div class="pl-5 mt-2 space-y-2 text-sm">
+                            <div class="flex items-center space-x-2 cursor-pointer hover:text-gray-200">
+                                <span class="material-symbols-outlined text-base text-purple-400">description</span>
+                                <span>main.py</span>
+                            </div>
+                            <div class="flex items-center space-x-2 cursor-pointer hover:text-gray-200">
+                                <span class="material-symbols-outlined text-base text-green-400">folder</span>
+                                <span>dataset</span>
+                            </div>
+                            <div class="flex items-center space-x-2 cursor-pointer hover:text-gray-200">
+                                <span class="material-symbols-outlined text-base text-orange-400">description</span>
+                                <span>config.json</span>
                             </div>
                         </div>
-                        <div class="flex">
-                            <div class="bg-[#3f4147] p-2 rounded-lg max-w-xs">
-                                <p class="font-mono text-orange-400">The crystal ball is hazy... but a small rate, like `1e-4`, with a scheduler, often pleases the machine spirits.</p>
-                            </div>
+                    </div>
+                    <div class="text-gray-400">
+                        <div class="flex items-center space-x-1 cursor-pointer hover:text-gray-200">
+                            <span class="material-symbols-outlined text-base">chevron_right</span>
+                            <span class="font-semibold text-sm">KIROWEEN-HACK</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="p-4 flex-shrink-0 border-t border-black/20">
-                <div class="bg-[#3f4147] rounded-lg flex items-center px-4">
-                    <input class="flex-1 bg-transparent border-none text-gray-200 placeholder-gray-500 focus:ring-0 text-sm" placeholder="Message #general-discussion" type="text"/>
-                    <button class="text-gray-400 hover:text-purple-400 p-2">
-                        <span class="material-symbols-outlined text-xl">add_circle</span>
+
+            <!-- Offerings to the Witch -->
+            <div class="p-4 border-b border-black/20">
+                <h3 class="font-display font-bold text-lg text-gray-100 mb-3 tracking-wide flex items-center space-x-2">
+                    <span>Offerings to the Witch</span>
+                    <span class="text-xl">🔮</span>
+                </h3>
+                <div class="space-y-2">
+                    <div class="bg-[#313338] p-3 rounded-lg border-l-4 border-orange-500">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-semibold text-orange-400">Code Quality</span>
+                            <span class="text-xs text-gray-400">85%</span>
+                        </div>
+                        <div class="w-full bg-[#2b2d31] rounded-full h-2">
+                            <div class="bg-gradient-to-r from-orange-500 to-yellow-500 h-2 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-[#313338] p-3 rounded-lg border-l-4 border-purple-500">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-semibold text-purple-400">Test Coverage</span>
+                            <span class="text-xs text-gray-400">72%</span>
+                        </div>
+                        <div class="w-full bg-[#2b2d31] rounded-full h-2">
+                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: 72%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-[#313338] p-3 rounded-lg border-l-4 border-green-500">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-semibold text-green-400">Performance</span>
+                            <span class="text-xs text-gray-400">91%</span>
+                        </div>
+                        <div class="w-full bg-[#2b2d31] rounded-full h-2">
+                            <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style="width: 91%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Thoughts -->
+            <div class="p-4 border-b border-black/20">
+                <h3 class="font-display font-bold text-lg text-gray-100 mb-3 tracking-wide flex items-center space-x-2">
+                    <span>Page Thoughts</span>
+                    <span class="text-xl">💭</span>
+                </h3>
+                <div class="bg-[#313338] p-3 rounded-lg space-y-2 text-sm">
+                    <div class="flex items-start space-x-2">
+                        <span class="text-purple-400 mt-0.5">•</span>
+                        <p class="text-gray-300">Consider adding error boundaries for better UX</p>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <span class="text-green-400 mt-0.5">•</span>
+                        <p class="text-gray-300">Ghost detection accuracy improved by 15%</p>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <span class="text-orange-400 mt-0.5">•</span>
+                        <p class="text-gray-300">Refactor needed in data preprocessing module</p>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <span class="text-blue-400 mt-0.5">•</span>
+                        <p class="text-gray-300">API response time: 120ms (excellent)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Section -->
+            <div class="flex-1 flex flex-col p-4">
+                <h3 class="font-display font-bold text-lg text-gray-100 mb-3 tracking-wide flex items-center space-x-2">
+                    <span>Team Chat</span>
+                    <span class="material-icons text-green-500 text-lg eerie-glow-green">chat</span>
+                </h3>
+                
+                <!-- Chat Messages -->
+                <div class="flex-1 bg-[#313338] rounded-lg p-3 mb-3 overflow-y-auto space-y-3 text-sm">
+                    <div class="flex items-start space-x-2">
+                        <img alt="Alex" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBssPp3ppR4L0DcqG3TmyEjBcd4UBBElGMdcMGBPDo4FWy00TSpQc_m3CxnmBFs7ooVPv3BRtBkERFTi5c9iT0LO6wFeBTLTqzW9bjhSuRVvFdVZj2hoO8YS3KPJue01zpwFt6WcbGjmEEjfausVBr-sXNzJj1fINrwi3MuRCu-4WsSSKEC9BmbcZksl_ihv3ogV-uHt5YmIullulIcK7B49GpllGRuVccql5W4jaM9pSg0kORVxk80SoFIobeE5iW2vqVSUG2rWOxH"/>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="font-semibold text-gray-200">Alex</span>
+                                <span class="text-xs text-gray-500">2:34 PM</span>
+                            </div>
+                            <p class="text-gray-300">Just pushed the ghost detection updates 👻</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-2">
+                        <img alt="Bella" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlwkwJpY9SBsf_kTNeAGnpEIxxC_GMUy2ykJ8f8vBja7Kw9sWK7e_GncalRPBh2K1brEcV5Mk5cQn3b3SY8Cs4_u3fumS_tTh-IUbM5_c7yWUvoTPV1cAaVor0Tuv0ArY5N04WikAA9WqhHExSPeRxf1uqivLgDOvSnzeRyTAowDhJWuo0vP0txoogo89UxOdKcS8WF5oBNHlV-HF1BLqElZ-fF9RBlUpfmBo3RogvL9XTteUScdl4ZLgkxo29ErMnuF3-sLXZeYSS"/>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="font-semibold text-gray-200">Bella</span>
+                                <span class="text-xs text-gray-500">2:35 PM</span>
+                            </div>
+                            <p class="text-gray-300">Nice! Testing it now 🧪</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-2">
+                        <div class="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">K</div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="font-semibold text-orange-400">Kiro AI</span>
+                                <span class="text-xs text-gray-500">2:36 PM</span>
+                            </div>
+                            <p class="text-gray-300 font-mono text-xs">Detected 3 potential optimizations in main.py. Run <span class="text-purple-400">/optimize</span> to apply.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="bg-[#3f4147] rounded-lg flex items-center px-3 py-2">
+                    <input class="flex-1 bg-transparent border-none text-gray-200 placeholder-gray-500 focus:ring-0 text-sm" placeholder="Message the team..." type="text"/>
+                    <button class="text-gray-400 hover:text-purple-400 transition-colors">
+                        <span class="material-symbols-outlined text-xl">send</span>
                     </button>
                 </div>
             </div>
