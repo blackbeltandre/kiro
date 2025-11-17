@@ -103,6 +103,90 @@ html {
     scroll-behavior: smooth;
 }
 
+/* ========================================
+   RESIZABLE SIDEBAR STYLES
+   ======================================== */
+
+/* Resize Handle */
+.resize-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: col-resize;
+    z-index: 100;
+    transition: background-color 0.2s ease;
+}
+
+.resize-handle-right {
+    right: -3px;
+}
+
+.resize-handle-left {
+    left: -3px;
+}
+
+/* Hover effect for resize handle */
+.resize-handle:hover {
+    background-color: rgba(139, 92, 246, 0.3);
+}
+
+.dark .resize-handle:hover {
+    background-color: rgba(139, 92, 246, 0.5);
+}
+
+/* Active resize indicator */
+.resize-handle:active {
+    background-color: rgba(139, 92, 246, 0.6);
+}
+
+.dark .resize-handle:active {
+    background-color: rgba(139, 92, 246, 0.8);
+}
+
+/* Visual indicator line in the middle of handle */
+.resize-handle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 40px;
+    background-color: transparent;
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+}
+
+.resize-handle:hover::before {
+    background-color: rgba(139, 92, 246, 0.8);
+}
+
+.dark .resize-handle:hover::before {
+    background-color: rgba(139, 92, 246, 1);
+}
+
+/* Prevent text selection during resize */
+body.resizing {
+    user-select: none;
+    cursor: col-resize !important;
+}
+
+/* Sidebar transition when not resizing */
+.left-sidebar,
+.right-sidebar {
+    transition: none;
+}
+
+/* Ensure sidebars have proper positioning */
+.left-sidebar {
+    flex-shrink: 0;
+}
+
+.right-sidebar {
+    flex-shrink: 0;
+}
+
 /* Code Editor Styles */
 .code-editor-textarea {
     background: transparent;
