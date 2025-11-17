@@ -38,6 +38,71 @@
     text-shadow: 0 0 5px #f97316, 0 0 10px #f97316;
 }
 
+/* ========================================
+   MINIMIZE/MAXIMIZE ANIMATIONS
+   ======================================== */
+
+/* Vibe Coding Section Transitions */
+#vibe-coding-section {
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                min-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#screen-share-section {
+    transition: flex 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Content Fade Animation */
+.vibe-content {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease-in-out,
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Toggle Icon Rotation */
+#vibe-toggle-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+}
+
+/* Toggle Button Pulse Effect */
+#vibe-toggle-button {
+    transition: transform 0.2s ease-in-out;
+}
+
+#vibe-toggle-button.scale-110 {
+    transform: scale(1.1);
+}
+
+/* Hover Effect on Toggle Header */
+.toggle-header {
+    transition: background-color 0.2s ease-in-out,
+                transform 0.1s ease-in-out;
+}
+
+.toggle-header:hover {
+    transform: translateY(-1px);
+}
+
+.toggle-header:active {
+    transform: translateY(0);
+}
+
+/* Minimized State Indicator */
+#vibe-coding-section.minimized {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark #vibe-coding-section.minimized {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
 /* Code Editor Styles */
 .code-editor-textarea {
     background: transparent;
