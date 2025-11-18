@@ -19,6 +19,9 @@
     <!-- Resizable Sidebar Script -->
     <script src="resize-sidebar.js" defer></script>
     
+    <!-- Font Awesome for SDK -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
@@ -40,6 +43,15 @@
                         lg: "0.75rem",
                         xl: "1rem",
                     },
+                    keyframes: {
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'scale(0.95)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.2s ease-out'
+                    }
                 },
             },
         };
@@ -71,76 +83,232 @@
             }
         }
 
-        // Minimize/Maximize Vibe Coding Section with Smooth Animation
-        let isVibeCodingMinimized = false;
+        // Toggle Undang Peserta Popup
+        function toggleUndangPeserta() {
+            const popup = document.getElementById('undang-peserta-popup');
+            if (popup) {
+                if (popup.classList.contains('hidden')) {
+                    popup.classList.remove('hidden');
+                    popup.classList.add('animate-fade-in');
+                } else {
+                    popup.classList.add('hidden');
+                    popup.classList.remove('animate-fade-in');
+                }
+            }
+        }
 
-        function toggleVibeCoding() {
-            const vibeCodingSection = document.getElementById('vibe-coding-section');
-            const screenShareSection = document.getElementById('screen-share-section');
-            const toggleIcon = document.getElementById('vibe-toggle-icon');
-            const toggleButton = document.getElementById('vibe-toggle-button');
-            const content = vibeCodingSection.querySelector('.vibe-content');
-            
-            isVibeCodingMinimized = !isVibeCodingMinimized;
-            
-            // Add rotation animation to icon
-            toggleIcon.style.transform = isVibeCodingMinimized ? 'rotate(180deg)' : 'rotate(0deg)';
-            
-            // Add pulse effect to button
-            toggleButton.classList.add('scale-110');
-            setTimeout(() => toggleButton.classList.remove('scale-110'), 200);
-            
-            if (isVibeCodingMinimized) {
-                // Minimize Vibe Coding with animation
-                vibeCodingSection.classList.add('minimized');
-                vibeCodingSection.style.height = '60px';
-                vibeCodingSection.style.minHeight = '60px';
-                screenShareSection.style.flex = '1';
-                toggleIcon.textContent = 'expand_more';
-                
-                // Fade out content
-                if (content) {
-                    content.style.opacity = '0';
-                    content.style.transform = 'translateY(-10px)';
-                    setTimeout(() => {
-                        content.style.display = 'none';
-                    }, 300);
+        function closeUndangPeserta() {
+            const popup = document.getElementById('undang-peserta-popup');
+            if (popup) {
+                popup.classList.add('hidden');
+                popup.classList.remove('animate-fade-in');
+            }
+        }
+
+        // LintasEdu SDK Integration
+        const SDK_URL = 'https://api.lintasedu.com/sdk.js';
+        const API_KEY = '9b73dc03-0e4d-4374-a7ca-39ea84153a7e';
+        const API_SECRET = '13827aa8-1d5e-454c-8896-c21c6a292d52';
+
+        function loadLintasEduSDK() {
+            if (window.LoadLintasEduSDK) {
+                console.log("LintasEdu SDK already loaded.");
+                window.LoadLintasEduSDK();
+                return;
+            }
+
+            if (document.getElementById('lintas-edu-sdk-script')) {
+                console.log("SDK script is already being loaded.");
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.id = 'lintas-edu-sdk-script';
+            script.src = SDK_URL;
+            script.setAttribute('data-api-key', API_KEY);
+            script.setAttribute('data-api-secret', API_SECRET);
+
+            script.onload = function() {
+                console.log("LintasEdu SDK loaded successfully.");
+                if (window.LoadLintasEduSDK) {
+                    window.LoadLintasEduSDK();
+                } else {
+                    console.error("LintasEdu SDK failed to initialize.");
                 }
+            };
+
+            script.onerror = function() {
+                console.error("Failed to load LintasEdu SDK from:", SDK_URL);
+            };
+
+            document.body.appendChild(script);
+        }
+
+        // WebSocket Chat Integration
+        let ws = null;
+
+        function connectWebSocket() {
+            ws = new WebSocket('ws://localhost:8765');
+            
+            ws.onopen = () => {
+                console.log('WebSocket connected to AI chat');
+                updateConnectionStatus(true);
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.ai_response) {
+                    addChatMessage('Kiro AI', data.ai_response, 'ai');
+                }
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateConnectionStatus(false);
+            };
+            
+            ws.onclose = () => {
+                console.log('WebSocket disconnected, reconnecting...');
+                updateConnectionStatus(false);
+                setTimeout(connectWebSocket, 3000);
+            };
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusIndicator = document.getElementById('ws-status');
+            if (statusIndicator) {
+                statusIndicator.style.backgroundColor = connected ? '#10b981' : '#ef4444';
+                statusIndicator.title = connected ? 'AI Connected' : 'AI Disconnected';
+            }
+        }
+
+        function sendChatMessage(message) {
+            if (!message.trim()) return;
+
+            addChatMessage('You', message, 'user');
+            saveChatToLocal('user', message);
+
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ message }));
             } else {
-                // Maximize Vibe Coding with animation
-                vibeCodingSection.classList.remove('minimized');
-                vibeCodingSection.style.height = '';
-                vibeCodingSection.style.minHeight = '';
-                screenShareSection.style.flex = '';
-                toggleIcon.textContent = 'expand_less';
-                
-                // Fade in content
-                if (content) {
-                    content.style.display = 'block';
-                    setTimeout(() => {
-                        content.style.opacity = '1';
-                        content.style.transform = 'translateY(0)';
-                    }, 50);
-                }
+                addChatMessage('System', 'AI is not connected. Please check WebSocket server.', 'system');
+            }
+        }
+
+        function addChatMessage(sender, message, type) {
+            const chatContainer = document.getElementById('team-chat-messages');
+            if (!chatContainer) return;
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start space-x-2';
+
+            let avatarHTML = '';
+            let senderClass = '';
+            
+            if (type === 'ai') {
+                avatarHTML = '<div class="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">K</div>';
+                senderClass = 'text-orange-600 dark:text-orange-400';
+            } else if (type === 'user') {
+                avatarHTML = '<div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">U</div>';
+                senderClass = 'text-blue-600 dark:text-blue-400';
+            } else {
+                avatarHTML = '<div class="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center text-white text-xs font-bold">S</div>';
+                senderClass = 'text-gray-600 dark:text-gray-400';
+            }
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            messageDiv.innerHTML = `
+                ${avatarHTML}
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="font-semibold ${senderClass}">${sender}</span>
+                        <span class="text-xs text-gray-500">${timeStr}</span>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 text-xs">${message}</p>
+                </div>
+            `;
+
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function saveChatToLocal(type, message) {
+            const saved = localStorage.getItem('teamChatHistory');
+            const messages = saved ? JSON.parse(saved) : [];
+            messages.push({ 
+                type, 
+                message, 
+                timestamp: new Date().toISOString() 
+            });
+            localStorage.setItem('teamChatHistory', JSON.stringify(messages));
+        }
+
+        function loadChatHistory() {
+            const saved = localStorage.getItem('teamChatHistory');
+            if (saved) {
+                const messages = JSON.parse(saved);
+                messages.forEach(msg => {
+                    const sender = msg.type === 'user' ? 'You' : 'Kiro AI';
+                    addChatMessage(sender, msg.message, msg.type);
+                });
             }
         }
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Set initial state
-            const vibeCodingSection = document.getElementById('vibe-coding-section');
-            const toggleIcon = document.getElementById('vibe-toggle-icon');
-            
-            if (vibeCodingSection && toggleIcon) {
-                toggleIcon.textContent = 'expand_less';
-            }
-            
             // Initialize resizable sidebars
             initResizableSidebars();
+
+            // Connect WebSocket for AI chat
+            connectWebSocket();
+
+            // Load chat history
+            loadChatHistory();
+
+            // Setup chat input
+            const chatInput = document.getElementById('team-chat-input');
+            const chatSendBtn = document.getElementById('team-chat-send');
+            
+            if (chatSendBtn) {
+                chatSendBtn.addEventListener('click', () => {
+                    if (chatInput) {
+                        sendChatMessage(chatInput.value);
+                        chatInput.value = '';
+                    }
+                });
+            }
+
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendChatMessage(chatInput.value);
+                        chatInput.value = '';
+                    }
+                });
+            }
+
+            // Auto-play background music on first interaction
+            const audio = document.getElementById('background-music');
+            if (audio) {
+                const playMusic = () => {
+                    audio.play().catch(e => console.log('Audio play failed:', e));
+                    document.removeEventListener('click', playMusic);
+                    document.removeEventListener('keydown', playMusic);
+                };
+                document.addEventListener('click', playMusic);
+                document.addEventListener('keydown', playMusic);
+            }
         });
     </script>
 </head>
 <body class="bg-gray-100 dark:bg-[#18191c] font-sans text-gray-800 dark:text-gray-200 transition-colors duration-200">
+    <!-- Background Music -->
+    <audio id="background-music" loop>
+        <source src="sdk/scarymusic.mp3" type="audio/mpeg">
+    </audio>
+    
     <div class="flex h-screen overflow-hidden bg-gray-100 dark:bg-[#18191c]">
         <!-- Left Sidebar: Icon Navigation -->
         <div class="flex flex-col w-16 bg-gray-200 dark:bg-[#202225] p-2 items-center justify-between transition-colors duration-200">
@@ -177,9 +345,21 @@
 
         <!-- Video Call Sidebar -->
         <div class="left-sidebar w-64 bg-white dark:bg-[#2b2d31] flex flex-col p-4 border-r border-gray-300 dark:border-black/20 transition-colors duration-200 relative">
-            <!-- Video Call Section -->
+            <!-- Video Call Section with LintasEdu SDK -->
             <div class="flex-1 flex flex-col">
-                <h2 class="font-display text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 tracking-wider">VIDEO CALL</h2>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-display text-lg font-bold text-gray-800 dark:text-gray-100 tracking-wider">VIDEO CALL</h2>
+                    <div id="ws-status" class="w-3 h-3 rounded-full bg-gray-400" title="AI Status"></div>
+                </div>
+                
+                <!-- LintasEdu SDK Container -->
+                <div id="lintasedu-sdk-container" class="mb-4">
+                    <button onclick="loadLintasEduSDK()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                        <i class="fas fa-video"></i>
+                        <span class="font-semibold">Hubungi Kami</span>
+                    </button>
+                </div>
+                
                 <div class="space-y-3">
                     <div class="relative rounded-lg overflow-hidden border-2 border-green-500 shadow-lg" style="box-shadow: 0 0 15px rgba(52, 211, 153, 0.5);">
                         <img alt="Video participant Alex" class="w-full h-24 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1ge_LRgfaX-UM2L9ICs1Zw25S2HpgeYRwI8r4M9Afrv-KEFDr5naLsEqLxXMBPv06WouR5GeNGhPMhQepYI7v2B_vzTjn0rwDvQzNnIAAC4KMPw_cL9H02AogrfHWb6_q2mAYcCebTr0cp5mMDA9kmvpE3qPbSHZukWoM3y7N6o2q_BHFWxMgu_kzosLsZrBqnICT0P9nH0eX3w_MWQ4sdX7BYpQWG0Di6ZYrua8eoHMEFG2B6J_Qe-EsQ8BZJRfAiHZAY__XdBt2"/>
@@ -205,121 +385,63 @@
             </header>
             
             <!-- Screen Share Section -->
-            <div id="screen-share-section" class="flex-1 flex flex-col items-center justify-center text-center p-8 transition-all duration-300">
-                <img alt="Ghost illustration" class="w-48 h-48 mb-6 opacity-80 dark:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1bjnCSBHruob-cTYYAj4NMkrguNIcnP_ULKp_2eEDUCtBmDSKaQUf1aFx6oPiIC6dfCrmOz2Zk-kogqmlQzjVsa7YdZui08cwNfBO5EOA4I2gjHr_T5wG8XbHELhcPWd0fmcgveWWj7442F8Fy5vDq2act3egD1JNzGKeIU8lhWQMDjj2M1MA_HDBlQDWRN3qJ4ZHFPdof8h_GbklTPWpDMKXtTSHzZWXzgwR4JmGop8ff1pSAsf4E6dZb1uB3w-XhQEhF36p7v59"/>
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2 font-display">Waiting for a screen share...</h2>
-                <p class="text-gray-600 dark:text-gray-400 max-w-sm">The main content area will display the video feed once someone starts sharing their screen.</p>
+            <div id="screen-share-section" class="flex-1 flex flex-col items-center justify-center text-center p-8 transition-all duration-300 relative">
+                <!-- Avatar Besar -->
+                <div class="w-48 h-48 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white text-8xl font-bold shadow-2xl mb-6">
+                    L
+                </div>
+                
+                <!-- Popup Undang Peserta -->
+                <div id="undang-peserta-popup" class="hidden absolute top-1/2 right-8 transform -translate-y-1/2 bg-white dark:bg-[#2b2d31] border border-gray-300 dark:border-gray-700 rounded-lg p-6 shadow-2xl w-80 z-50">
+                    <div class="flex items-start justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white">Undang Peserta</h3>
+                        <button onclick="closeUndangPeserta()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        <span class="text-yellow-500 font-semibold">Salin link</span>, kirimkan untuk undang orang lain.
+                    </p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Orang dengan link dapat bergabung tanpa izin.
+                    </p>
+                    <button class="w-full bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] text-gray-800 dark:text-white py-2 px-4 rounded-lg border border-gray-300 dark:border-gray-600 transition-colors flex items-center justify-center space-x-2">
+                        <span class="material-symbols-outlined">content_copy</span>
+                        <span class="font-semibold">Salin Informasi</span>
+                    </button>
+                </div>
                 
                 <!-- Call Controls -->
-                <div class="mt-8 flex items-center justify-center bg-white dark:bg-[#202225] rounded-xl p-2 space-x-2 shadow-2xl transition-colors duration-200">
-                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-lg transition-colors" title="Toggle Microphone">
-                        <span class="material-symbols-outlined">mic</span>
+                <div class="absolute bottom-8 flex items-center justify-center bg-white dark:bg-[#202225] rounded-xl p-2 space-x-2 shadow-2xl transition-colors duration-200">
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-full transition-colors" title="Info">
+                        <span class="material-symbols-outlined">info</span>
                     </button>
-                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-lg transition-colors" title="Toggle Camera">
-                        <span class="material-symbols-outlined">videocam</span>
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-full transition-colors" title="Participants">
+                        <span class="material-symbols-outlined">group</span>
                     </button>
-                    <button class="bg-orange-600 hover:bg-orange-700 text-white px-4 h-12 flex items-center justify-center rounded-lg transition-colors space-x-2" title="Start Sharing">
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-full transition-colors" title="Chat">
+                        <span class="material-symbols-outlined">chat</span>
+                    </button>
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-full transition-colors" title="Hand Raise">
+                        <span class="material-symbols-outlined">back_hand</span>
+                    </button>
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-full transition-colors" title="Reactions">
+                        <span class="material-symbols-outlined">sentiment_satisfied</span>
+                    </button>
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-full transition-colors" title="Screen Share">
                         <span class="material-symbols-outlined">present_to_all</span>
-                        <span class="font-semibold">Start Sharing</span>
                     </button>
-                    <button class="bg-red-600 text-white w-24 h-12 flex items-center justify-center rounded-lg hover:bg-red-700 transition-colors space-x-2" title="Leave Call">
+                    <button onclick="toggleUndangPeserta()" class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-full transition-colors" title="More Options">
+                        <span class="material-symbols-outlined">more_vert</span>
+                    </button>
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#313338] hover:bg-gray-200 dark:hover:bg-[#3f4147] rounded-full transition-colors" title="Settings">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                    <button class="w-12 h-12 flex items-center justify-center text-white bg-red-600 hover:bg-red-700 rounded-full transition-colors" title="Leave Call">
                         <span class="material-symbols-outlined">call_end</span>
-                        <span>Leave</span>
                     </button>
                 </div>
             </div>
-
-            <!-- Vibe Coding / KIRO IDE Section -->
-            <div id="vibe-coding-section" class="flex-1 bg-white dark:bg-[#2b2d31] border-t border-gray-300 dark:border-black/20 overflow-hidden transition-all duration-300">
-                <!-- Header with Minimize/Maximize Button -->
-                <div class="toggle-header flex items-center justify-between p-3 bg-gray-100 dark:bg-[#202225] border-b border-gray-300 dark:border-black/20 cursor-pointer hover:bg-gray-200 dark:hover:bg-[#313338] transition-all duration-200" onclick="toggleVibeCoding()">
-                    <h2 class="font-display text-base font-bold text-gray-800 dark:text-gray-100 tracking-wider flex items-center space-x-2">
-                        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 dark:eerie-glow-purple">auto_awesome</span>
-                        <span>KIRO IDE - Vibe Coding</span>
-                    </h2>
-                    <button id="vibe-toggle-button" class="p-1 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-all duration-200">
-                        <span id="vibe-toggle-icon" class="material-symbols-outlined text-gray-700 dark:text-gray-300">expand_less</span>
-                    </button>
-                </div>
-
-                <!-- Vibe Coding Content -->
-                <div class="vibe-content p-4 overflow-y-auto" style="max-height: calc(50vh - 60px);">
-                    <div class="space-y-3">
-                        <!-- AI Suggestion Card -->
-                        <div class="bg-gray-50 dark:bg-[#313338] p-4 rounded-lg border-l-4 border-purple-500 transition-colors duration-200">
-                            <div class="flex items-start space-x-3">
-                                <span class="text-2xl">🤖</span>
-                                <div class="flex-1">
-                                    <p class="text-sm font-semibold text-purple-600 dark:text-purple-400 mb-1">AI Suggestion</p>
-                                    <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">I noticed you're working on ghost detection. Would you like me to:</p>
-                                    <div class="space-y-2">
-                                        <button class="w-full text-left px-3 py-2 bg-white dark:bg-[#2b2d31] hover:bg-gray-100 dark:hover:bg-[#3f4147] rounded text-xs text-gray-700 dark:text-gray-300 transition-colors border border-gray-200 dark:border-transparent">
-                                            ✨ Optimize the detection algorithm
-                                        </button>
-                                        <button class="w-full text-left px-3 py-2 bg-white dark:bg-[#2b2d31] hover:bg-gray-100 dark:hover:bg-[#3f4147] rounded text-xs text-gray-700 dark:text-gray-300 transition-colors border border-gray-200 dark:border-transparent">
-                                            📝 Add error handling and logging
-                                        </button>
-                                        <button class="w-full text-left px-3 py-2 bg-white dark:bg-[#2b2d31] hover:bg-gray-100 dark:hover:bg-[#3f4147] rounded text-xs text-gray-700 dark:text-gray-300 transition-colors border border-gray-200 dark:border-transparent">
-                                            🧪 Generate unit tests
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="p-3 bg-gray-50 dark:bg-[#313338] hover:bg-gray-100 dark:hover:bg-[#3f4147] rounded-lg text-left border border-gray-200 dark:border-transparent transition-all duration-200 hover:shadow-md">
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <span class="material-symbols-outlined text-orange-500 dark:text-orange-400 text-lg">code</span>
-                                    <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">Generate Code</span>
-                                </div>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">AI-powered coding</p>
-                            </button>
-                            <button class="p-3 bg-gray-50 dark:bg-[#313338] hover:bg-gray-100 dark:hover:bg-[#3f4147] rounded-lg text-left border border-gray-200 dark:border-transparent transition-all duration-200 hover:shadow-md">
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <span class="material-symbols-outlined text-green-500 dark:text-green-400 text-lg">bug_report</span>
-                                    <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">Debug</span>
-                                </div>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">Find & fix issues</p>
-                            </button>
-                            <button class="p-3 bg-gray-50 dark:bg-[#313338] hover:bg-gray-100 dark:hover:bg-[#3f4147] rounded-lg text-left border border-gray-200 dark:border-transparent transition-all duration-200 hover:shadow-md">
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <span class="material-symbols-outlined text-blue-500 dark:text-blue-400 text-lg">description</span>
-                                    <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">Document</span>
-                                </div>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">Auto documentation</p>
-                            </button>
-                            <button class="p-3 bg-gray-50 dark:bg-[#313338] hover:bg-gray-100 dark:hover:bg-[#3f4147] rounded-lg text-left border border-gray-200 dark:border-transparent transition-all duration-200 hover:shadow-md">
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <span class="material-symbols-outlined text-pink-500 dark:text-pink-400 text-lg">psychology</span>
-                                    <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">Explain</span>
-                                </div>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">Code explanation</p>
-                            </button>
-                        </div>
-
-                        <!-- Chat Input -->
-                        <div class="bg-gray-50 dark:bg-[#313338] rounded-lg p-3 border border-gray-200 dark:border-transparent transition-colors duration-200">
-                            <textarea class="w-full bg-white dark:bg-[#2b2d31] text-gray-800 dark:text-gray-300 text-sm placeholder-gray-500 focus:ring-2 focus:ring-purple-500 border border-gray-300 dark:border-gray-600 rounded p-2 resize-none transition-colors" rows="2" placeholder="Ask Kiro anything... (e.g., 'Add error handling to find_ghosts function')"></textarea>
-                            <div class="flex items-center justify-between mt-2">
-                                <div class="flex items-center space-x-2 text-xs text-gray-600 dark:text-gray-400">
-                                    <button class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
-                                        <span class="material-symbols-outlined text-base">attach_file</span>
-                                    </button>
-                                    <button class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
-                                        <span class="material-symbols-outlined text-base">image</span>
-                                    </button>
-                                </div>
-                                <button class="px-4 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-semibold rounded transition-all shadow-md">
-                                    Send
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
 
         </main>
 
@@ -421,15 +543,15 @@
                 </div>
             </div>
 
-            <!-- Team Chat -->
+            <!-- Team Chat with AI Integration -->
             <div class="flex-1 flex flex-col p-4">
                 <h3 class="font-display font-bold text-lg text-gray-800 dark:text-gray-100 mb-3 tracking-wide flex items-center space-x-2">
                     <span>Team Chat</span>
                     <span class="material-icons text-green-600 dark:text-green-500 text-lg dark:eerie-glow-green">chat</span>
                 </h3>
                 
-                <!-- Chat Messages -->
-                <div class="flex-1 bg-gray-50 dark:bg-[#313338] rounded-lg p-3 mb-3 overflow-y-auto space-y-3 text-sm border border-gray-200 dark:border-transparent transition-colors duration-200">
+                <!-- Chat Messages with AI -->
+                <div id="team-chat-messages" class="flex-1 bg-gray-50 dark:bg-[#313338] rounded-lg p-3 mb-3 overflow-y-auto space-y-3 text-sm border border-gray-200 dark:border-transparent transition-colors duration-200">
                     <div class="flex items-start space-x-2">
                         <img alt="Alex" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBssPp3ppR4L0DcqG3TmyEjBcd4UBBElGMdcMGBPDo4FWy00TSpQc_m3CxnmBFs7ooVPv3BRtBkERFTi5c9iT0LO6wFeBTLTqzW9bjhSuRVvFdVZj2hoO8YS3KPJue01zpwFt6WcbGjmEEjfausVBr-sXNzJj1fINrwi3MuRCu-4WsSSKEC9BmbcZksl_ihv3ogV-uHt5YmIullulIcK7B49GpllGRuVccql5W4jaM9pSg0kORVxk80SoFIobeE5iW2vqVSUG2rWOxH"/>
                         <div class="flex-1">
@@ -437,7 +559,7 @@
                                 <span class="font-semibold text-gray-800 dark:text-gray-200">Alex</span>
                                 <span class="text-xs text-gray-500">2:34 PM</span>
                             </div>
-                            <p class="text-gray-700 dark:text-gray-300">Just pushed the ghost detection updates 👻</p>
+                            <p class="text-gray-700 dark:text-gray-300 text-xs">Just pushed the ghost detection updates 👻</p>
                         </div>
                     </div>
 
@@ -448,7 +570,7 @@
                                 <span class="font-semibold text-gray-800 dark:text-gray-200">Bella</span>
                                 <span class="text-xs text-gray-500">2:35 PM</span>
                             </div>
-                            <p class="text-gray-700 dark:text-gray-300">Nice! Testing it now 🧪</p>
+                            <p class="text-gray-700 dark:text-gray-300 text-xs">Nice! Testing it now 🧪</p>
                         </div>
                     </div>
 
@@ -464,10 +586,10 @@
                     </div>
                 </div>
 
-                <!-- Chat Input -->
+                <!-- Chat Input with AI -->
                 <div class="bg-white dark:bg-[#3f4147] rounded-lg flex items-center px-3 py-2 border border-gray-300 dark:border-transparent transition-colors duration-200">
-                    <input class="flex-1 bg-transparent border-none text-gray-800 dark:text-gray-200 placeholder-gray-500 focus:ring-0 text-sm" placeholder="Message the team..." type="text"/>
-                    <button class="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+                    <input id="team-chat-input" class="flex-1 bg-transparent border-none text-gray-800 dark:text-gray-200 placeholder-gray-500 focus:ring-0 text-sm" placeholder="Message the team or ask AI..." type="text"/>
+                    <button id="team-chat-send" class="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                         <span class="material-symbols-outlined text-xl">send</span>
                     </button>
                 </div>
