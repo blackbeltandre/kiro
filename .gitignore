@@ -1,0 +1,27 @@
+# Large files
+sdk/checkpoint.zip
+sdk/scarymusic.mp3
+sdk/checkpoint/scarymusic.mp3
+
+# Node modules
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
