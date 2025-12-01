@@ -1,277 +1,158 @@
-# 🎃 Hackathonia Collaboration Hub
+# Witch Chat Interface - Multi-Client AI Chat System
 
-> Platform kolaborasi hackathon dengan integrasi LintasEdu SDK, AI Chat, dan fitur real-time
+A mystical-themed multi-client chat application with AI integration, document processing, and real-time synchronization.
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Start AI Server
+### For Deployers (Server Setup)
+
+#### Option 1: One-Click Launch (Recommended)
+- **Windows**: Double-click `start_server.bat` (starts on port 5500)
+- **Mac/Linux**: Double-click `start_server.sh` (or run `chmod +x start_server.sh` first)
+
+#### Option 2: Manual Setup
+1. **Install Python dependencies:**
 ```bash
-# Windows
-start_ai_server.bat
-
-# Linux/Mac
-cd sdk && python websocket_server.py
-```
-
-### 2. Open Application
-```bash
-# Buka index.html di browser
-# Atau gunakan Live Server
-```
-
-### 3. Use Features
-- **Video Call**: Klik "Hubungi Kami" di sidebar kiri
-- **AI Chat**: Ketik di Team Chat (kanan bawah)
-- **Music**: Klik di mana saja untuk play music
-
-## ✨ Features
-
-### 🎥 Video Call Integration
-- LintasEdu SDK terintegrasi
-- Tombol "Hubungi Kami" untuk memulai call
-- Status indicator (hijau = connected, merah = disconnected)
-
-### 🤖 AI Chat with Google Gemini
-- Real-time chat dengan AI
-- WebSocket connection untuk instant response
-- Auto-reconnect jika disconnect
-- Chat history persistent (localStorage)
-
-### 💾 Persistent Chat History
-- Semua chat tersimpan otomatis
-- History tetap ada setelah refresh
-- Format JSON dengan timestamp
-
-### 🎵 Background Music
-- Scary music auto-play
-- Loop continuous
-- Play on first user interaction
-
-### 🎨 Modern UI
-- Dark/Light mode toggle
-- Responsive design
-- Smooth animations
-- Material Design icons
-
-## 📁 Project Structure
-
-```
-├── index.html                      # Main application
-├── style.css                       # Custom styles
-├── resize-sidebar.js               # Sidebar resize functionality
-├── start_ai_server.bat            # Quick start server (Windows)
-│
-├── sdk/                           # SDK folder
-│   ├── websocket_server.py       # AI backend server
-│   ├── scarymusic.mp3            # Background music
-│   ├── requirements.txt          # Python dependencies
-│   └── README.md                 # SDK documentation
-│
-└── Documentation/
-    ├── QUICK_START.md            # Quick start guide
-    ├── SDK_INTEGRATION_GUIDE.md  # Full integration guide
-    ├── SDK_INTEGRATION_SUMMARY.md # Integration summary
-    ├── ARCHITECTURE.md           # System architecture
-    ├── TESTING_CHECKLIST.md      # Testing checklist
-    └── TROUBLESHOOTING.md        # Troubleshooting guide
-```
-
-## 🔧 Installation
-
-### Prerequisites
-- Python 3.x
-- Modern browser (Chrome, Firefox, Edge)
-- Internet connection (for LintasEdu SDK)
-
-### Setup
-```bash
-# 1. Clone repository
-git clone <repository-url>
-cd hackathonia-hub
-
-# 2. Install Python dependencies
-cd sdk
 pip install -r requirements.txt
-
-# 3. Start WebSocket server
-python websocket_server.py
-
-# 4. Open index.html in browser
 ```
 
-## 📊 Status Indicators
-
-| Indicator | Location | Meaning |
-|-----------|----------|---------|
-| 🟢 Green dot | Next to "VIDEO CALL" | AI Connected |
-| 🔴 Red dot | Next to "VIDEO CALL" | AI Disconnected |
-
-## 🎯 Key Technologies
-
-### Frontend
-- **Tailwind CSS** - Utility-first CSS framework
-- **Google Fonts** - Chakra Petch, Roboto, Fira Code
-- **Material Icons** - Icon library
-- **Font Awesome** - Additional icons
-- **WebSocket API** - Real-time communication
-
-### Backend
-- **Python 3.x** - Backend language
-- **websockets** - WebSocket server
-- **google-genai** - Google Gemini API
-- **asyncio** - Async programming
-
-## 📖 Documentation
-
-- **[Quick Start](QUICK_START.md)** - Get started in 5 minutes
-- **[Integration Guide](SDK_INTEGRATION_GUIDE.md)** - Full integration details
-- **[Architecture](ARCHITECTURE.md)** - System architecture & data flow
-- **[Testing Checklist](TESTING_CHECKLIST.md)** - Complete testing guide
-- **[Troubleshooting](TROUBLESHOOTING.md)** - Common issues & solutions
-
-## 🔐 Configuration
-
-### LintasEdu SDK
-```javascript
-const SDK_URL = 'https://api.lintasedu.com/sdk.js';
-const API_KEY = '9b73dc03-0e4d-4374-a7ca-39ea84153a7e';
-const API_SECRET = '13827aa8-1d5e-454c-8896-c21c6a292d52';
-```
-
-### WebSocket Server
-```python
-# Port: 8765
-# URL: ws://localhost:8765
-# AI Model: Google Gemini 2.5 Flash Lite
-```
-
-## 🧪 Testing
-
-Run the complete testing checklist:
+2. **Start the combined server:**
 ```bash
-# See TESTING_CHECKLIST.md for details
+python combined_server.py
 ```
 
-Key tests:
-- ✅ WebSocket connection
-- ✅ AI chat functionality
-- ✅ LintasEdu SDK loading
-- ✅ Chat history persistence
-- ✅ Background music playback
-- ✅ UI consistency
+3. **Server will start on:**
+- **HTTP Server**: `http://localhost:5000` (file serving, uploads, API)
+- **WebSocket Server**: `ws://localhost:8765` (real-time chat)
 
-## 🐛 Troubleshooting
+4. **Share the URL with users:**
+- Give users: `http://localhost:5000/clientapp/client.html`
 
-### AI Not Responding?
-```bash
-# Check if server is running
-cd sdk
-python websocket_server.py
+### For Users (Access Application)
+
+1. **Open the application:**
+- **🎯 RECOMMENDED**: `http://localhost:5000/clientapp/client.html` *(Complete version)*
+- **Legacy**: `http://localhost:5000` *(Original main app)*
+
+2. **No installation needed** - just open the URL in your browser!
+
+> **⚠️ Important**: Use `clientapp/client.html` - this is the finished, polished version with all features!
+
+## Features
+
+### 🎭 Multi-Client System
+- **Synchronized data** across all connected clients
+- **Real-time updates** for chat, thoughts, and file uploads
+- **Standalone client app** with identical functionality
+
+### 🤖 AI Integration
+- **Google Gemini API** for intelligent responses
+- **Context-aware AI** using uploaded documents
+- **Shared thoughts integration** - AI sees all user thoughts
+- **PDF text extraction** for document context
+
+### 🎨 User Interface
+- **Dark mystical theme** with professional styling
+- **Three-column layout**: SDK (25%) + Witch (50%) + Sidebar (25%)
+- **Animated interactions** with grabbing hand effects
+- **Custom KIROWEEN branding** in topbar
+
+### 📁 File Management
+- **PDF text extraction** using pypdf library
+- **Document context** automatically added to AI conversations
+- **Animated file deletion** with hand grabbing effect
+- **Tombstone delete buttons** for thematic consistency
+
+### 💭 Mindreading Skull
+- **Shared thoughts system** visible to all clients
+- **Speech bubble design** connecting to skull image
+- **Real-time synchronization** across all users
+- **AI context integration** - thoughts influence AI responses
+
+### 🎥 Video Integration
+- **LintasEdu SDK** for video calling functionality
+- **Isolated iframe** prevents interference with main app
+- **Session protection** (causes reload warnings - external SDK behavior)
+
+## Architecture
+
+### Server Components
+- **Combined Server**: HTTP + WebSocket on ports 5000 & 8765
+- **File Processing**: PDF text extraction and storage
+- **Real-time Sync**: WebSocket for chat, HTTP polling for thoughts/files
+- **Context Management**: Uploaded files and thoughts feed AI
+
+### Client Applications
+- **Main App**: Full-featured with iframe isolation
+- **Client App**: Standalone version for multiple users
+- **Synchronized Data**: All clients share same chat, thoughts, and files
+
+### File Structure
+```
+├── Main Application
+│   ├── iframeindex.html      # Main interface
+│   ├── chat-iframe.html      # Isolated chat
+│   ├── rightbar.html         # Sidebar (files + thoughts)
+│   └── hackathon.html        # SDK loader
+├── Client Application
+│   ├── clientapp/client.html # Standalone client
+│   ├── clientapp/client.js   # Client logic
+│   └── clientapp/assets/     # Images (hand, skull, logo, etc.)
+├── Server
+│   ├── combined_server.py    # Main server
+│   ├── messages.json         # Chat history
+│   ├── shared_thoughts.json  # Shared thoughts
+│   ├── file_context.json     # File metadata
+│   └── uploaded_files/       # PDF storage + extracted text
+└── Styling
+    └── style.css             # Global styles
 ```
 
-### SDK Not Loading?
-- Check internet connection
-- Verify API credentials
-- Check browser console for errors
+## Usage Guide
 
-### More Issues?
-See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete guide.
+### 🎯 Recommended Usage (Client App)
+1. **Open**: `http://localhost:5000/clientapp/client.html`
+2. **Video Call**: Click "Hubungi Kami" in left panel
+3. **Upload Files**: Use "Offer to Witch" section (animated deletion!)
+4. **Share Thoughts**: Use "Mindreading Skull" for group chat
+5. **Chat with AI**: AI sees all uploaded files and shared thoughts
+6. **Multiple Users**: Open same URL in multiple browsers for collaboration
 
-## 🚀 Deployment
+### Legacy Main App (Optional)
+- Available at `http://localhost:5000`
+- Uses iframe architecture
+- Less polished than client app
 
-### Development
-```bash
-# Local development
-python sdk/websocket_server.py
-open index.html
-```
+### Multi-Client Features
+- **Shared Chat**: All users see same AI conversation
+- **Shared Thoughts**: "Mindreading Skull" visible to everyone
+- **Shared Files**: Uploaded documents available to all
+- **Real-time Sync**: Changes appear instantly on all clients
 
-### Production
-```bash
-# Deploy backend to cloud (AWS, GCP, Azure)
-# Deploy frontend to static hosting (Netlify, Vercel)
-# Use wss:// instead of ws://
-# Add authentication and rate limiting
-```
+## Technical Details
 
-## 📝 API Reference
+### Dependencies
+- `google-genai` - Google Gemini AI API
+- `websockets` - Real-time chat communication
+- `pypdf` - PDF text extraction
 
-### WebSocket Messages
+### Ports
+- **5000**: HTTP server (file serving, uploads, thoughts API)
+- **8765**: WebSocket server (real-time chat)
 
-**Client → Server**
-```json
-{
-  "message": "User message here"
-}
-```
+### Data Flow
+1. **Chat**: WebSocket → AI → All clients
+2. **Thoughts**: HTTP POST → Server → HTTP polling (all clients)
+3. **Files**: HTTP upload → PDF extraction → AI context
+4. **Sync**: 2-second polling for thoughts and files
 
-**Server → Client**
-```json
-{
-  "success": true,
-  "user_message": "User message here",
-  "ai_response": "AI response here"
-}
-```
+## Known Issues
 
-### LocalStorage Keys
+⚠️ **"Reload site?" popup** - Caused by LintasEdu SDK's session protection (external behavior, cannot be modified)
 
-- `theme` - Dark/Light mode preference
-- `teamChatHistory` - Chat history with AI
+## Customization
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 👥 Team
-
-- **Frontend**: Modern UI with Tailwind CSS
-- **Backend**: Python WebSocket server
-- **AI**: Google Gemini integration
-- **SDK**: LintasEdu video call integration
-
-## 🎉 Acknowledgments
-
-- LintasEdu for SDK
-- Google for Gemini API
-- Tailwind CSS team
-- Material Design team
-
-## 📞 Support
-
-- **Documentation**: See `/docs` folder
-- **Issues**: Open GitHub issue
-- **Email**: support@example.com
-
-## 🔄 Updates
-
-### Version 1.0.0 (Current)
-- ✅ LintasEdu SDK integration
-- ✅ AI chat with Google Gemini
-- ✅ Persistent chat history
-- ✅ Background music
-- ✅ Dark/Light mode
-- ✅ Responsive design
-
-### Roadmap
-- [ ] File upload for AI
-- [ ] Voice chat integration
-- [ ] Screen sharing
-- [ ] Collaborative coding
-- [ ] Multi-language support
-
----
-
-Made with ❤️ for Hackathonia
-
-**Status**: 🟢 Production Ready
-
-**Last Updated**: November 2024
+- **Branding**: Replace `KIROWEEN.png` with your logo
+- **Animations**: Modify CSS keyframes in client.html
+- **AI Model**: Change model in combined_server.py
+- **Styling**: Update colors and themes in CSS files
