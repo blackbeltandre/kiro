@@ -13,7 +13,7 @@ self.onmessage = function(e) {
 };
 
 function connectWebSocket() {
-    ws = new WebSocket('ws://localhost:8765');
+    ws = new WebSocket('ws://0.0.0.0:8765');
     
     ws.onopen = function() {
         self.postMessage({ type: 'connected' });

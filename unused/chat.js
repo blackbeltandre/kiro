@@ -60,7 +60,7 @@ async function sendMessage() {
 
         // Send to Python backend
         try {
-            const response = await fetch('http://localhost:5000/save_message', {
+            const response = await fetch('http://0.0.0.0:5000/save_message', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

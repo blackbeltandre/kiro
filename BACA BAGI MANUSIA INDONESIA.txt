@@ -1,1 +1,0 @@
-buka client.html di folder clientapp ya. itu hasil akhirnya, yang lain cuma prototype/guide file

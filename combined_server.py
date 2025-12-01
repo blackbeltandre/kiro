@@ -363,13 +363,13 @@ async def handle_websocket(websocket):
 # Run HTTP server in separate thread
 def run_http_server():
     http_server = HTTPServer(('0.0.0.0', 5000), RequestHandler)
-    print('HTTP server running on http://localhost:5000')
+    print('HTTP server running on http://0.0.0.0:5000')
     http_server.serve_forever()
 
 # Run WebSocket server
 async def run_websocket_server():
-    async with websockets.serve(handle_websocket, "localhost", 8765):
-        print("WebSocket server running on ws://localhost:8765")
+    async with websockets.serve(handle_websocket, "0.0.0.0", 8765):
+        print("WebSocket server running on ws://0.0.0.0:8765")
         await asyncio.Future()  # run forever
 
 # Main function to run both servers

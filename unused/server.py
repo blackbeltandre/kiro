@@ -123,5 +123,5 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     server = HTTPServer(('0.0.0.0', 5000), RequestHandler)
-    print('Server running on http://localhost:5000')
+    print('Server running on http://0.0.0.0:5000')
     server.serve_forever()

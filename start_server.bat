@@ -17,8 +17,8 @@ echo.
 echo [2/2] Starting server on port 5500...
 echo.
 echo ========================================
-echo   Server running at: http://localhost:5500
-echo   Client app: http://localhost:5500/clientapp/client.html
+echo   Server running at: http://0.0.0.0:5500
+echo   Client app: http://0.0.0.0:5500/clientapp/client.html
 echo ========================================
 echo.
 echo Press Ctrl+C to stop the server
