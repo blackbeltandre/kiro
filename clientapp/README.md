@@ -17,7 +17,7 @@ This is a standalone client application that connects to the Witch Chat server.
 
 2. Open `client.html` in a web browser:
    - You can open it directly (file://)
-   - Or serve it via the server at: `http://0.0.0.0:5000/clientapp/client.html`
+   - Or serve it via the server at: `http://195.179.227.191:5000/clientapp/client.html`
 
 3. Multiple clients can connect simultaneously and share:
    - Chat messages with the witch

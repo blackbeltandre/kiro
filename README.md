@@ -22,17 +22,17 @@ python combined_server.py
 ```
 
 3. **Server will start on:**
-- **HTTP Server**: `http://0.0.0.0:5000` (file serving, uploads, API)
-- **WebSocket Server**: `ws://0.0.0.0:8765` (real-time chat)
+- **HTTP Server**: `http://195.179.227.191:5000` (file serving, uploads, API)
+- **WebSocket Server**: `ws://195.179.227.191:8765` (real-time chat)
 
 4. **Share the URL with users:**
-- Give users: `http://0.0.0.0:5000/clientapp/client.html`
+- Give users: `http://195.179.227.191:5000/clientapp/client.html`
 
 ### For Users (Access Application)
 
 1. **Open the application:**
-- **🎯 RECOMMENDED**: `http://0.0.0.0:5000/clientapp/client.html` *(Complete version)*
-- **Legacy**: `http://0.0.0.0:5000` *(Original main app)*
+- **🎯 RECOMMENDED**: `http://195.179.227.191:5000/clientapp/client.html` *(Complete version)*
+- **Legacy**: `http://195.179.227.191:5000` *(Original main app)*
 
 2. **No installation needed** - just open the URL in your browser!
 
@@ -111,7 +111,7 @@ python combined_server.py
 ## Usage Guide
 
 ### 🎯 Recommended Usage (Client App)
-1. **Open**: `http://0.0.0.0:5000/clientapp/client.html`
+1. **Open**: `http://195.179.227.191:5000/clientapp/client.html`
 2. **Video Call**: Click "Hubungi Kami" in left panel
 3. **Upload Files**: Use "Offer to Witch" section (animated deletion!)
 4. **Share Thoughts**: Use "Mindreading Skull" for group chat
@@ -119,7 +119,7 @@ python combined_server.py
 6. **Multiple Users**: Open same URL in multiple browsers for collaboration
 
 ### Legacy Main App (Optional)
-- Available at `http://0.0.0.0:5000`
+- Available at `http://195.179.227.191:5000`
 - Uses iframe architecture
 - Less polished than client app
 

@@ -41,8 +41,8 @@
 
 ### How to Use
 1. **Start server**: `python combined_server.py`
-2. **Main app**: Open `http://0.0.0.0:5000`
-3. **Client app**: Open `http://0.0.0.0:5000/clientapp/client.html`
+2. **Main app**: Open `http://195.179.227.191:5000`
+3. **Client app**: Open `http://195.179.227.191:5000/clientapp/client.html`
 4. **Multiple clients**: Open multiple browser windows/tabs
 5. **Upload files**: Click "Offer to Witch" to upload PDFs/documents
 6. **Share thoughts**: Use "Mindreading Skull" section for shared chat

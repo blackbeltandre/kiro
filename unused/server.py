@@ -122,6 +122,6 @@ class RequestHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
 
 if __name__ == '__main__':
-    server = HTTPServer(('0.0.0.0', 5000), RequestHandler)
-    print('Server running on http://0.0.0.0:5000')
+    server = HTTPServer(('195.179.227.191', 5000), RequestHandler)
+    print('Server running on http://195.179.227.191:5000')
     server.serve_forever()

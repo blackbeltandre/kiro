@@ -247,7 +247,7 @@
             localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
             
             try {
-                await fetch('http://0.0.0.0:5000/upload_context', {
+                await fetch('http://195.179.227.191:5000/upload_context', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ files: uploadedFiles })
@@ -279,7 +279,7 @@
                     localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
                     
                     try {
-                        await fetch('http://0.0.0.0:5000/upload_context', {
+                        await fetch('http://195.179.227.191:5000/upload_context', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ files: uploadedFiles })
@@ -317,7 +317,7 @@
         // Load thoughts from server
         async function loadThoughts() {
             try {
-                const response = await fetch('http://0.0.0.0:5000/get_thoughts');
+                const response = await fetch('http://195.179.227.191:5000/get_thoughts');
                 const data = await response.json();
                 
                 thoughtsMessages.innerHTML = '';
@@ -341,7 +341,7 @@
             
             if (message) {
                 try {
-                    await fetch('http://0.0.0.0:5000/add_thought', {
+                    await fetch('http://195.179.227.191:5000/add_thought', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message })

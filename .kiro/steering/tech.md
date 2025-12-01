@@ -50,8 +50,8 @@ Required packages:
 - `pypdf` - PDF text extraction
 
 ### Access the applications
-- Main app: `http://0.0.0.0:5000` or `http://0.0.0.0:5000/iframeindex.html`
-- Client app: `http://0.0.0.0:5000/clientapp/client.html`
+- Main app: `http://195.179.227.191:5000` or `http://195.179.227.191:5000/iframeindex.html`
+- Client app: `http://195.179.227.191:5000/clientapp/client.html`
 
 ## Server Endpoints
 

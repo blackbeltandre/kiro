@@ -1,6 +1,6 @@
 // Configuration
-const SERVER_URL = 'http://0.0.0.0:5000';
-const WS_URL = 'ws://0.0.0.0:8765';
+const SERVER_URL = 'http://195.179.227.191:5000';
+const WS_URL = 'ws://195.179.227.191:8765';
 
 // DOM Elements
 const chatMessages = document.getElementById('chatMessages');

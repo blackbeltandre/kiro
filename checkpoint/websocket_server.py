@@ -72,8 +72,8 @@ async def handle_message(websocket):
             await websocket.send(json.dumps({'error': str(e)}))
 
 async def main():
-    async with websockets.serve(handle_message, "0.0.0.0", 8765):
-        print("WebSocket server running on ws://0.0.0.0:8765")
+    async with websockets.serve(handle_message, "195.179.227.191", 8765):
+        print("WebSocket server running on ws://195.179.227.191:8765")
         await asyncio.Future()  # run forever
 
 if __name__ == '__main__':
